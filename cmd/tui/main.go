@@ -2,9 +2,10 @@ package main
 
 import (
 	"context"
+	"echozone-v2/core/player"
+	"echozone-v2/core/youtube"
 	"fmt"
 	"os"
-	"os/exec"
 	"os/signal"
 	"strings"
 	"syscall"
@@ -21,21 +22,18 @@ func main() {
 	videoURL := args[1]
 
 	// Step 1: Extract direct audio URL using yt-dlp
-	ytCmd := exec.Command("yt-dlp", "-g", "-f", "140", videoURL)
-	out, err := ytCmd.Output()
+	audioURL, err := youtube.ExtractAudioURL(videoURL)
 	if err != nil {
-		fmt.Println("yt-dlp error:", err)
+		fmt.Println("could not extract audio URL:", err)
 		os.Exit(1)
 	}
 
-	audioURL := strings.TrimSpace(string(out))
 	fmt.Println("Starting playback...")
 
 	// Step 2: Run MPV with context so it dies if our program dies
 	ctx, cancel := context.WithCancel(context.Background())
-	mpvCmd := exec.CommandContext(ctx, "mpv", "--no-video", "--quiet", audioURL)
-
-	if err := mpvCmd.Start(); err != nil {
+	mpvCmd, err := player.Stream(audioURL, ctx)
+	if err != nil {
 		fmt.Println("mpv start error:", err)
 		os.Exit(1)
 	}

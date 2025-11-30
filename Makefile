@@ -6,7 +6,7 @@ tidy:
 	go mod tidy
 
 run-tui: tidy
-	go run ./cmd/echozone-tui
+	go run ./cmd/tui
 
 build-tui: tidy
-	go build -o ez-tui ./cmd/echozone-tui
+	go build -o ez-tui ./cmd/tui
