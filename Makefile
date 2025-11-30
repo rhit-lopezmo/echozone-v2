@@ -1,4 +1,4 @@
-DEFAULT_GOAL: run-tui
+DEFAULT_GOAL: build-tui
 
 .PHONY: tidy run-tui build-tui
 
